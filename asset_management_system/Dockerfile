@@ -22,4 +22,4 @@ COPY . /app/
 RUN python manage.py collectstatic --noinput
 
 # Run using Gunicorn (Industry standard for production)
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "asset_management.wsgi:application"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:$PORT asset_management.wsgi:application"]
