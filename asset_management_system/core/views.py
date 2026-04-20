@@ -251,7 +251,7 @@ def report_issue(request, asset_id):
     return render(request, 'employee/report_issue.html', {'form': form, 'asset': asset})
 
 
-# Add this to your views.py
+
 @login_required
 @role_required(allowed_roles=['admin'])
 def manage_repairs(request):
