@@ -23,5 +23,6 @@ urlpatterns = [
     path('asset/<int:asset_id>/report/', views.report_issue, name='report_issue'),
     path('admin/repairs/', views.manage_repairs, name='manage_repairs'),
     path('admin/repairs/assign/<int:ticket_id>/', views.assign_technician, name='assign_technician'),
+    path('inventory/add/', views.inventory_create, name='inventory_create'),
 ]
 

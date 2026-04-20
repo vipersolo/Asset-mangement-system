@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import dj_database_url
-
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -40,9 +39,11 @@ DEBUG = True
 ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://asset-mangement-system.onrender.com/'
-]
+    'https://asset-mangement-system.onrender.com',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
 
+]
 
 # Application definition
 
@@ -94,16 +95,15 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
     DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+        'default': dj_database_url.parse(DATABASE_URL)
     }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

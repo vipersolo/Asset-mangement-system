@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.db.models import F
 from .forms import RepairRequestForm
 from .models import RepairTicket
+from .forms import InventoryItemForm
 
 
 def home(request):
@@ -283,3 +284,16 @@ def assign_technician(request, ticket_id):
         'ticket': ticket,
         'technicians': technicians
     })
+
+
+@login_required
+@role_required(allowed_roles=['admin'])
+def inventory_create(request):
+    if request.method == 'POST':
+        form = InventoryItemForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('inventory_list')
+    else:
+        form = InventoryItemForm()
+    return render(request, 'inventory/inventory_form.html', {'form': form})
