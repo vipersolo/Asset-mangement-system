@@ -1,43 +1,73 @@
 import os
 import django
 
-# Replace 'asset_management' with your actual folder name containing settings.py
+# 1. Set the settings module (Ensure 'asset_management' matches your project folder name)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'asset_management.settings')
 django.setup()
 
-from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 
 def setup_system():
-    # 1. Create Groups (Roles) in lowercase
-    roles = ['admin', 'employee', 'technician']
-    for role in roles:
-        Group.objects.get_or_create(name=role)
-    print("Roles synchronized: admin, employee, technician")
-
-    # 2. Get the User model
     User = get_user_model()
     
-    # Define your actors
+    # 2. Define the actors with the 'role' field values
     users_to_create = [
-        {'un': 'admin', 'email': 'admin@test.com', 'pw': 'admin123', 'role': 'admin', 'is_staff': True, 'is_super': True},
-        {'un': 'employee', 'email': 'emp@test.com', 'pw': 'emp123', 'role': 'employee', 'is_staff': False, 'is_super': False},
-        {'un': 'technician', 'email': 'tech@test.com', 'pw': 'tech123', 'role': 'technician', 'is_staff': True, 'is_super': False},
+        {
+            'username': 'admin', 
+            'email': 'admin@test.com', 
+            'password': 'admin123', 
+            'role': 'admin', 
+            'is_staff': True, 
+            'is_superuser': True
+        },
+        {
+            'username': 'employee', 
+            'email': 'emp@test.com', 
+            'password': 'emp123', 
+            'role': 'employee', 
+            'is_staff': False, 
+            'is_superuser': False
+        },
+        {
+            'username': 'technician', 
+            'email': 'tech@test.com', 
+            'password': 'tech123', 
+            'role': 'technician', 
+            'is_staff': True, 
+            'is_superuser': False
+        },
     ]
 
+    print("--- Starting User Setup ---")
+
     for u in users_to_create:
-        if not User.objects.filter(username=u['un']).exists():
-            if u['is_super']:
-                user = User.objects.create_superuser(username=u['un'], email=u['email'], password=u['pw'])
+        if not User.objects.filter(username=u['username']).exists():
+            if u['is_superuser']:
+                # create_superuser handles staff/superuser flags automatically
+                user = User.objects.create_superuser(
+                    username=u['username'], 
+                    email=u['email'], 
+                    password=u['password'],
+                    role=u['role']
+                )
             else:
-                user = User.objects.create_user(username=u['un'], email=u['email'], password=u['pw'], is_staff=u['is_staff'])
-            
-            # Assign user to their specific group
-            group = Group.objects.get(name=u['role'])
-            user.groups.add(group)
-            print(f"User created: {u['un']} assigned to role: {u['role']}")
+                # create_user for normal roles
+                user = User.objects.create_user(
+                    username=u['username'], 
+                    email=u['email'], 
+                    password=u['password'], 
+                    is_staff=u['is_staff'],
+                    role=u['role']
+                )
+            print(f"✅ Created: {u['username']} with role: {u['role']}")
         else:
-            print(f"User {u['un']} already exists.")
+            # If user exists, we update the role just in case
+            user = User.objects.get(username=u['username'])
+            user.role = u['role']
+            user.save()
+            print(f"ℹ️ User {u['username']} already exists. Role updated to: {u['role']}")
+
+    print("--- Setup Complete ---")
 
 if __name__ == "__main__":
     setup_system()
