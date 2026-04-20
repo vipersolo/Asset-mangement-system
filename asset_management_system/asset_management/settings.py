@@ -36,7 +36,12 @@ SECRET_KEY = 'django-insecure-ml)vgx7uq^lmfg(46^d(m!0$+rn7rj9zrz78p0sct)=c-p+44z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# Replace with your actual Render URL
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://asset-mangement-system.onrender.com/'
+]
 
 
 # Application definition
